@@ -1,32 +1,39 @@
 # 🎙️ AI Voice Denial Management System
 
-An automated AI-driven solution that handles insurance denial calls using **LiveKit SIP**, **Deepgram (STT)**, **Groq (LLM)**, and **Deepgram (TTS)**. The system orchestrates a 3-way conversation between an Insurance Representative (PSTN), an AI Agent, and a Monitoring Console.
+An automated **AI-driven solution** that handles insurance denial calls using **LiveKit SIP**, **Deepgram (STT)**, **Groq (LLM)**, and **Deepgram (TTS)**. The system orchestrates a **three-way conversation** between an **Insurance Representative (PSTN)**, an **AI Agent**, and a **Monitoring Console**.
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 * **SIP Trunk Provider:** Twilio
-* **Communication:** LiveKit (SIP & WebRTC)
+* **Communication Layer:** LiveKit (SIP & WebRTC)
 * **AI Orchestration:** Node.js
-* **Audio Pipeline:** Deepgram (Real-time STT), Deepgram (Ultra-low latency TTS)
+* **Audio Pipeline:** Deepgram
+
+  * Real-time **Speech-to-Text (STT)**
+  * Ultra-low latency **Text-to-Speech (TTS)**
 * **LLM Engine:** Groq (Llama 3.1)
-* **Frontend:** React.js (Vite)
+* **Frontend:** React (Vite)
 * **Backend:** Express.js
 
 ---
 
-## 📋 Prerequisites
+# 📋 Prerequisites
 
-Project ko run karne ke liye aapke paas **teen terminal windows** honi chahiye aur niche diye gaye environment variables set hone chahiye.
+To run this project, you need **three terminal windows** and the required **environment variables configured**.
 
-### 🔑 Environment Configuration
+---
 
-Aapko **do alag `.env` files** banani hain:
+# 🔑 Environment Configuration
 
-#### 1. Main Folder (`/`) `.env`
+You need to create **two separate `.env` files**.
 
-Root directory mein yeh file banayein (AI Orchestrator aur SIP logic ke liye):
+---
+
+## 1️⃣ Main Folder (`/`) `.env`
+
+Create this file in the **root directory**. It is used for the **AI orchestrator and SIP logic**.
 
 ```env
 TWILIO_SID=your_twilio_sid
@@ -37,100 +44,169 @@ LIVEKIT_URL=your_livekit_url
 LIVEKIT_KEY=your_livekit_api_key
 LIVEKIT_SECRET=your_livekit_secret
 GROK_KEY=your_grok_api_key
-
 ```
 
-#### 2. Backend Folder (`/backend`) `.env`
+---
 
-`/backend` directory ke andar yeh file banayein (Token generation ke liye):
+## 2️⃣ Backend Folder (`/backend`) `.env`
+
+Create this file inside the **backend directory**. It is used for **token generation**.
 
 ```env
 LIVEKIT_KEY=your_livekit_api_key
 LIVEKIT_SECRET=your_livekit_secret
-
 ```
 
 ---
 
-## 🚀 Installation & Setup
+# 🚀 Installation & Setup
 
-**Zaroori Note:** Har folder mein ja kar `npm install` karna lazmi hai.
+**Important Note:** You must run `npm install` inside **each project folder**.
 
-### 🏁 Step 1: Dependencies Install Karein
+---
 
-Teen alag terminals kholein aur ye commands run karein:
+## 🏁 Step 1: Install Dependencies
 
-1. **Terminal 1 (Backend):** `cd backend && npm install`
-2. **Terminal 2 (Frontend):** `cd frontend && npm install`
-3. **Terminal 3 (Main):** `npm install`
+Open **three different terminals** and run the following commands.
 
-### 🏃 Step 2: Services Run Karein
+### Terminal 1 (Backend)
 
-Installation ke baad, components ko is order mein start karein:
+```bash
+cd backend
+npm install
+```
 
-**1️⃣ Backend Server (Token & API)**
+### Terminal 2 (Frontend)
+
+```bash
+cd frontend
+npm install
+```
+
+### Terminal 3 (Main Project)
+
+```bash
+npm install
+```
+
+---
+
+# 🏃 Step 2: Run the Services
+
+After installing the dependencies, start the components in the following order.
+
+---
+
+## 1️⃣ Backend Server (Token & API)
 
 ```bash
 cd backend
 node server.js
-
 ```
 
-*Port: http://localhost:5000*
+Runs on:
 
-**2️⃣ Frontend (Monitoring Dashboard)**
+```
+http://localhost:5000
+```
+
+---
+
+## 2️⃣ Frontend (Monitoring Dashboard)
 
 ```bash
 cd frontend
 npm run dev
-
 ```
 
-*Port: http://localhost:5173*
+Runs on:
 
-**3️⃣ AI Agent & SIP Worker (The Brain)**
+```
+http://localhost:5173
+```
+
+---
+
+## 3️⃣ AI Agent & SIP Worker (The Brain)
 
 ```bash
 node src/index.js
-
 ```
 
----
-
-## 🏗️ Architecture Flow
-
-1. **Initialization:** `ai-worker` LiveKit room join karta hai aur participants ka wait karta hai.
-2. **SIP Dispatch:** `callService` Twilio/LiveKit Trunk ke zariye Insurance Representative ko call milata hai.
-3. **Media Bridge:** Call answer hote hi, LiveKit PSTN audio ko WebRTC room mein bridge kar deta hai.
-4. **AI Loop:**
-* **STT:** Deepgram voice ko real-time text mein convert karta hai.
-* **LLM (Groq):** Llama 3.1 context samajh kar "Member ID" ya "Denial Code" mangne ka faisla karta hai.
-* **TTS:** Deepgram AI ke response ko wapas audio mein badalta hai jo Representative ko sunayi deta hai.
-
-
+This component manages the **AI conversation logic and call orchestration**.
 
 ---
 
-## 📂 Project Structure
+# 🏗️ Architecture Flow
 
-```text
+### 1️⃣ Initialization
+
+The **AI worker** joins a **LiveKit room** and waits for participants to connect.
+
+### 2️⃣ SIP Dispatch
+
+The **callService** initiates an outbound call to the **Insurance Representative** using the **Twilio/LiveKit SIP trunk**.
+
+### 3️⃣ Media Bridge
+
+Once the call is answered, **LiveKit bridges the PSTN audio into the WebRTC room**.
+
+### 4️⃣ AI Conversation Loop
+
+The system runs a continuous AI processing pipeline:
+
+**Speech-to-Text**
+
+* Deepgram converts the representative’s voice into **real-time text**.
+
+**LLM Processing**
+
+* Groq running **Llama 3.1** analyzes the conversation context.
+* The AI decides what to ask next (for example **Member ID** or **Denial Code**).
+
+**Text-to-Speech**
+
+* Deepgram converts the AI response into **audio**.
+* The response is played back to the **Insurance Representative**.
+
+---
+
+# 📂 Project Structure
+
+```
 ├── backend/            # Express server for tokens
 ├── frontend/           # React monitoring dashboard
 ├── src/
-│   ├── ai/             # STT (Deepgram), LLM (Groq), TTS (Deepgram) ,Orchestrator Layer
-│   ├── livekit/        # Room & Connection management
-│   ├── twilio/         # SIP Outbound call logic
+│   ├── ai/             # STT (Deepgram), LLM (Groq), TTS (Deepgram), Orchestrator Layer
+│   ├── livekit/        # Room and connection management
+│   ├── twilio/         # SIP outbound call logic
 │   ├── state/          # Conversation stage management
 │   └── index.js        # Main entry point for AI Worker
-├── .env                # Global Main Config
+├── .env                # Global configuration
 └── README.md
-
 ```
 
+---
 
-## ⚠️ Troubleshooting
+# ⚠️ Troubleshooting
 
-* **One-Way Audio:** LiveKit Dashboard mein check karein ke SIP Trunk ka "Media Bridge" enabled hai.
-* **Identity Error:** AI Worker aur SIP Participant ki identity unique honi chahiye (e.g., `ai-bot` aur `rep-1`).
-* **Connection Error:** Ensure karein ke backend (5000) aur frontend (5173) ports khali hain.
+### One-Way Audio
+
+Check in the **LiveKit dashboard** that the **SIP trunk “Media Bridge” option is enabled**.
+
+### Identity Error
+
+Ensure that the **AI worker and SIP participant have unique identities**, for example:
+
+```
+ai-bot
+rep-1
+```
+
+### Connection Error
+
+Make sure that the following ports are **not already in use**:
+
+* **Backend:** `5000`
+* **Frontend:** `5173`
 
